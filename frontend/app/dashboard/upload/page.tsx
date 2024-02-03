@@ -2,12 +2,7 @@
 import React, { useCallback, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import Dropzone from "react-dropzone";
-import Image from "next/image";
-
-// interface ImagePreviewType {
-//   id: string;
-//   src: ArrayBuffer;
-// }
+import { Button } from "@/components/ui/button";
 
 export default function page() {
   const [images, setImages] = useState<File[]>([]);
@@ -18,11 +13,16 @@ export default function page() {
 
   console.log(images);
 
+  const handleUpload = () => {};
+
   return (
-    <div className="pt-10">
+    <div className="pt-10 max-w-[1250px] w-11/12 mx-auto">
+      <p className="mb-10 font-bold uppercase text-xl">
+        Upload your desired image
+      </p>
       <Dropzone onDrop={onDrop} multiple={false}>
         {({ getRootProps, getInputProps, isDragActive }) => (
-          <section className="h-[400px] border border-dashed max-w-[1250px] w-11/12 rounded-md mx-auto">
+          <section className="h-[400px] border border-dashed border-black mb-10 rounded-md">
             <div
               {...getRootProps()}
               className="w-full h-full flex justify-center items-center"
@@ -48,6 +48,8 @@ export default function page() {
           </div>
         </div>
       )}
+
+      <Button onClick={handleUpload} className="my-10">Upload</Button>
     </div>
   );
 }
