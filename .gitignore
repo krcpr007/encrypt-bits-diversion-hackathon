@@ -1,0 +1,3 @@
+.venv
+Model/trained_model.h5
+Model/trained_model.keras
