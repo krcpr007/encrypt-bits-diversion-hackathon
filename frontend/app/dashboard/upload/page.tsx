@@ -22,7 +22,7 @@ export default function page() {
     <div className="pt-10">
       <Dropzone onDrop={onDrop} multiple={false}>
         {({ getRootProps, getInputProps, isDragActive }) => (
-          <section className="h-[400px] border border-dashed max-w-[1250px] w-11/12 rounded-md mx-auto">
+          <section className="h-[400px] border border-dashed border-black max-w-[1250px] w-11/12 rounded-md mx-auto">
             <div
               {...getRootProps()}
               className="w-full h-full flex justify-center items-center"
