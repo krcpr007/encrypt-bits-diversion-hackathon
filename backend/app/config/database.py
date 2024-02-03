@@ -1,18 +1,19 @@
 from pymongo.mongo_client import MongoClient
 from fastapi import HTTPException
 import os
-
 ## get the environment variables username, password and db_url and replate the values
 username = os.getenv("USERNAME") or ""
 password = os.getenv("PASSWORD") or ""
 db_url_str = os.getenv("DB_URL") or ""
 db_url = db_url_str.replace("<username>", username).replace("<password>", password)
-
+db_url = "mongodb+srv://shubhamku044:GoodStuff69@cluster.t5k9eal.mongodb.net/test"
+# print(db_url, username, password, db_url_str, "hello")
 client = None
 database = None
 
 
 def connect_to_database():
+    print(db_url)
     global client, database
     print("Connecting to MongoDB database....")
     try:
