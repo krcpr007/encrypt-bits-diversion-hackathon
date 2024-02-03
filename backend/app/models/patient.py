@@ -32,3 +32,8 @@ class Patient(BaseModel):
                 "imageUrl": "https://www.google.com",
             }
         }
+
+
+class DownloadReqBody(BaseModel):
+    id: str
+    key: str

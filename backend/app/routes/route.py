@@ -1,15 +1,18 @@
 from fastapi import APIRouter, File, UploadFile, Depends, Form
+from fastapi.responses import JSONResponse
 from app.models import patient
 from app.config import database
+from app.utils import json_encoder
 from pymongo.database import Database
 from app.config.s3 import s3
 from fastapi.middleware.cors import CORSMiddleware
 from tensorflow.keras.models import load_model
+from bson import ObjectId
+from bson.json_util import dumps
 import bchlib
 import os
 import pickle
 from io import BytesIO
-import tensorflow as tf
 import numpy as np
 from PIL import Image
 from reedsolo import RSCodec
@@ -31,7 +34,6 @@ image_folder = "../../../train/eye"
 
 # print(images)
 images_pickle_file = "images.pkl"
-print(images_pickle_file)
 if os.path.exists(images_pickle_file):
     with open(images_pickle_file, "rb") as f:
         images = pickle.load(f)
@@ -135,10 +137,15 @@ def upload_file(
 
 
 @router.post("/download")
-def download_file(db: Database = Depends(database.get_database)):
+def download_file(
+    req_body: patient.DownloadReqBody, db: Database = Depends(database.get_database)
+):
     try:
-        patients = db["patients"].find()
-        patients_data = [patient.Patient(**data) for data in patients]
+        patient_key = req_body.key
+        patient_id = req_body.id
+        patient_data = db["patients"].find_one({"_id": ObjectId(patient_id)})
+        if patient_id:
+            patient_data["_id"] = str(patient_data["_id"])
     except Exception as e:
         return {"status": "error", "message": str(e)}
-    return {"status": "ok", "data": patients_data}
+    return JSONResponse(status_code=200, content={"data": patient_data})
