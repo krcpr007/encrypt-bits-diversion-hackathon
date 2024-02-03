@@ -1,10 +1,15 @@
 from fastapi import FastAPI, Depends
 import uvicorn
-from dotenv import load_dotenv
-from routes import route
-from config import database
+from dotenv import load_dotenv, find_dotenv
+from app.routes import route
+from app.config import database
 from fastapi.middleware.cors import CORSMiddleware
-config = load_dotenv(".env")
+import os
+
+if load_dotenv(os.path.join(os.path.dirname(__file__), ".env")):
+    print("Environment variables loaded successfully.✅")
+else:
+    print("Failed to load environment variables.❌")
 
 app = FastAPI(root_path="/api/v1")
 origins = ["*"]
