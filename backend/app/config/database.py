@@ -1,4 +1,5 @@
 from pymongo.mongo_client import MongoClient
+from fastapi import HTTPException
 import os
 
 ## get the environment variables username, password and db_url and replate the values
@@ -33,6 +34,4 @@ def close_connection():
 
 
 def get_database():
-    if not client or not database:
-        connect_to_database()
     return database
