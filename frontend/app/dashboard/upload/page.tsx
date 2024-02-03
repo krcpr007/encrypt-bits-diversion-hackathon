@@ -1,28 +1,51 @@
 "use client";
-import React, { useCallback, useState } from "react";
+import React, { useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import Dropzone from "react-dropzone";
 import { Button } from "@/components/ui/button";
+import Image from "next/image";
+import { Copy } from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import toast from "react-hot-toast";
 
 export default function page() {
   const [images, setImages] = useState<File[]>([]);
+  const [previewImage, setPreviewImage] = useState<string[]>([]);
+  const [key, setKey] = useState<string>("");
 
   const onDrop = (acceptedFiles: File[]) => {
-    setImages([...images, ...acceptedFiles]);
+    setImages((prev) => [...prev, ...acceptedFiles]);
+    convertToBase64(acceptedFiles);
   };
 
-  console.log(images);
+  const convertToBase64 = (acceptedFiles: any) => {
+    console.log({ acceptedFiles });
+    acceptedFiles.map((image: any) => {
+      setPreviewImage((prev) => [...prev, URL.createObjectURL(image)]);
+    });
+  };
 
-  const handleUpload = () => {};
+  const handleUpload = () => {
+    document.getElementById("key-dialog")?.click();
+  };
 
   return (
     <div className="pt-10 max-w-[1250px] w-11/12 mx-auto">
       <p className="mb-10 font-bold uppercase text-xl">
         Upload your desired image
       </p>
-      <Dropzone onDrop={onDrop} multiple={false}>
+      <Dropzone onDrop={onDrop}>
         {({ getRootProps, getInputProps, isDragActive }) => (
-          <section className="h-[400px] border border-dashed border-black mb-10 rounded-md">
+          <section className="h-[400px] border border-dashed border-black rounded-md mb-10">
             <div
               {...getRootProps()}
               className="w-full h-full flex justify-center items-center"
@@ -39,17 +62,59 @@ export default function page() {
       </Dropzone>
 
       {images.length > 0 && (
-        <div>
+        <div className="my-10">
           <p>Selected Images:</p>
           <div className="grid grid-cols-5 gap-5">
-            {/* {images.map((image) => (
-              <Image src={image.src} width={200} height={200} />
-            ))} */}
+            {previewImage.map((image, index) => (
+              <Image
+                alt="image"
+                src={image}
+                width={200}
+                height={200}
+                key={index}
+              />
+            ))}
           </div>
         </div>
       )}
 
-      <Button onClick={handleUpload} className="my-10">Upload</Button>
+      <Button onClick={handleUpload}>Upload</Button>
+
+      <Dialog>
+        <DialogTrigger id="key-dialog"></DialogTrigger>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Share link</DialogTitle>
+            <DialogDescription>
+              Anyone who has this link will be able to view this.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="flex items-center space-x-2">
+            <div className="grid flex-1 gap-2">
+              <Label htmlFor="link" className="sr-only">
+                Key
+              </Label>
+              <Input id="key" defaultValue={key} readOnly />
+            </div>
+            <Button
+              type="submit"
+              size="sm"
+              className="px-3"
+              onClick={() => {
+                try {
+                  navigator.clipboard.writeText(key);
+                  toast.success("Key copied successfully");
+                } catch (error) {
+                  toast.error("Failed to copy key");
+                }
+              }}
+            >
+              <span className="sr-only">Copy</span>
+              <Copy className="h-4 w-4" />
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

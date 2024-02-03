@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { Rubik } from "next/font/google";
+import { Toaster } from "react-hot-toast";
 
 const rubik = Rubik({
   subsets: ["latin"],
@@ -20,6 +21,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${rubik.variable} min-h-screen w-full`}>
+        <Toaster />
         {children}
       </body>
     </html>
