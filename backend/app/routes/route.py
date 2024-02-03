@@ -33,7 +33,7 @@ def upload_file(
     return {"msg": f"file uploaded, filename: {file.filename}"}
 
 
-@router.get("/download")
+@router.post("/download")
 def download_file(db: Database = Depends(database.get_database)):
     try:
         patients = db["patients"].find()
