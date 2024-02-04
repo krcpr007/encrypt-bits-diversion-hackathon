@@ -1,17 +1,45 @@
-# encrypt-pixels
+# Encrypt-pixels
 
-## Backend
+## How to install it locally
 
-### Install dependencies
+### Frontend
+
+1. Go to the frontend dir
+
+```bash
+cd frontend/
+```
+
+2. Install all the packages
+
+```bash
+npm install
+```
+
+3. Run the server
+
+```bash
+npm run dev
+```
+
+### Backend
+
+1. Go to backend dir
+
+```bash
+cd backend/
+```
+
+2. Install all the required packages
 
 ```bash
 pip install -r requirements.txt
 ```
 
-### Start backend
+3. Run the `main.py` file
 
 ```bash
-uvicorn app.main:app --reload
+python main.py
 ```
 
 # Devfolio
