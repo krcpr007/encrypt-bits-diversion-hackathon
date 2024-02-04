@@ -18,6 +18,8 @@ import {
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 
+const API_ROUTE: string = process.env.NEXT_PUBLIC_DEV_API_ROUTE as string;
+
 export default function LoginForm() {
   const form = useForm<z.infer<typeof loginValidationSchema>>({
     resolver: zodResolver(loginValidationSchema),
@@ -30,7 +32,7 @@ export default function LoginForm() {
   async function onSubmit(values: z.infer<typeof loginValidationSchema>) {
     try {
       setLoading(true);
-      const res = await fetch("http://localhost:3000/api/login", {
+      const res = await fetch(`${API_ROUTE}/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(values),

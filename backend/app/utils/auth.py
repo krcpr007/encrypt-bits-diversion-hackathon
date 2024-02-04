@@ -1,7 +1,10 @@
+from fastapi import Depends, HTTPException, status
+from fastapi.security import OAuth2PasswordBearer
 from passlib.hash import pbkdf2_sha256
 from datetime import datetime, timedelta
 import os
 import jwt
+from jose import JWTError
 
 SECRET_KEY = os.getenv("SECRET_KEY")
 
