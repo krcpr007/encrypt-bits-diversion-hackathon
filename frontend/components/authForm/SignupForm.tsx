@@ -1,9 +1,8 @@
 "use client";
-
 import React, { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { createUserValidationSchema, loginValidationSchema } from "@/formValidationSchemas/userFormSchema";
+import { createUserValidationSchema } from "@/formValidationSchemas/userFormSchema";
 import { z } from "zod";
 import {
   Form,
@@ -14,6 +13,8 @@ import {
 } from "@/components/ui/form";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+
+const API_ROUTE: string = process.env.NEXT_PUBLIC_DEV_API_ROUTE as string;
 
 export default function SignupForm() {
   const form = useForm<z.infer<typeof createUserValidationSchema>>({
@@ -27,10 +28,15 @@ export default function SignupForm() {
   async function onSubmit(values: z.infer<typeof createUserValidationSchema>) {
     try {
       setLoading(true);
-      const res = await fetch("http://localhost:3000/api/login", {
+      const res = await fetch(`${API_ROUTE}/register`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(values),
+        body: JSON.stringify({
+          name: `${values.firstName} ${values.lastName}`,
+          email: values.email,
+          password: values.password,
+          passwordConfirm: values.confirmPassword,
+        }),
       });
 
       const data = await res.json();
@@ -61,9 +67,8 @@ export default function SignupForm() {
           </Link>
         </p>
         <div
-          className={`bg-red-400 rounded-md px-5 py-2 text-center my-5 ${
-            error !== null ? "block" : "hidden"
-          }`}
+          className={`bg-red-400 rounded-md px-5 py-2 text-center my-5 ${error !== null ? "block" : "hidden"
+            }`}
         >
           <p className="font-semibold">{error}</p>
         </div>
@@ -97,7 +102,7 @@ export default function SignupForm() {
                   <FormItem>
                     <FormControl>
                       <input
-                        type="email"
+                        type="text"
                         className="bg-gray-100 text-gray-900 border-0 rounded-md p-2 focus:bg-gray-200 focus:outline-none focus:ring-1 focus:ring-blue-500 transition ease-in-out duration-150 w-full"
                         placeholder="Last Name"
                         {...field}
@@ -135,6 +140,23 @@ export default function SignupForm() {
                       type="password"
                       className="bg-gray-100 text-gray-900 border-0 rounded-md p-2 focus:bg-gray-200 focus:outline-none focus:ring-1 focus:ring-blue-500 transition ease-in-out duration-150 w-full"
                       placeholder="Password"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="confirmPassword"
+              render={({ field }) => (
+                <FormItem>
+                  <FormControl>
+                    <input
+                      type="password"
+                      className="bg-gray-100 text-gray-900 border-0 rounded-md p-2 focus:bg-gray-200 focus:outline-none focus:ring-1 focus:ring-blue-500 transition ease-in-out duration-150 w-full"
+                      placeholder="Confirm Password"
                       {...field}
                     />
                   </FormControl>
