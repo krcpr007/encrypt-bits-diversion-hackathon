@@ -32,7 +32,9 @@ export default function LoginForm() {
   async function onSubmit(values: z.infer<typeof loginValidationSchema>) {
     try {
       setLoading(true);
+
       const res = await fetch(`${API_ROUTE}/login`, {
+
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(values),
