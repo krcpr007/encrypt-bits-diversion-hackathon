@@ -1,22 +1,30 @@
-import os
-from pymongo import MongoClient, errors
-from pydantic import BaseModel, ValidationError
+from pydantic import BaseModel, EmailStr
+from datetime import datetime
 
-class User(BaseModel):
+
+class UserBaseSchema(BaseModel):
+    name: str
     email: str
+    created_at: datetime | None = None
+    updated_at: datetime | None = None
+
+
+class CreateUserSchema(UserBaseSchema):
+    password: str
+    passwordConfirm: str
+    verified: bool = False
+
+
+class LoginUserSchema(BaseModel):
+    email: EmailStr
     password: str
 
-client = MongoClient(os.getenv('DB_URL'))
-db = client['test']
-users = db['users']
 
-try:
-    users.create_index("email", unique=True)
-except errors.DuplicateKeyError as e:
-    print(f"Duplicate key error: {e}")
+class UserResponseSchema(UserBaseSchema):
+    id: str
+    pass
 
-def create_user(email: str, password: str):
-    user = User(email=email, password=password)
-    if users.find_one({"email": user.email}):
-        raise ValidationError(f"User with email {user.email} already exists")
-    users.insert_one(user.dict())
+
+class UserResponse(BaseModel):
+    status: str
+    user: UserResponseSchema
