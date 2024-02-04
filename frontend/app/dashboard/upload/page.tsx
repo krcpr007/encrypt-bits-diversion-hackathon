@@ -20,6 +20,7 @@ import toast from "react-hot-toast";
 export default function page() {
   const [images, setImages] = useState<File[]>([]);
   const [previewImage, setPreviewImage] = useState<string[]>([]);
+  const [name, setName] = useState<string>("");
   const [key, setKey] = useState<string>("");
 
   const onDrop = (acceptedFiles: File[]) => {
@@ -28,13 +29,15 @@ export default function page() {
   };
 
   const convertToBase64 = (acceptedFiles: any) => {
-    console.log({ acceptedFiles });
     acceptedFiles.map((image: any) => {
       setPreviewImage((prev) => [...prev, URL.createObjectURL(image)]);
     });
   };
 
   const handleUpload = () => {
+    if (images.length === 0) {
+      return toast.error("Atleast one file is required");
+    }
     document.getElementById("key-dialog")?.click();
   };
 
@@ -61,6 +64,18 @@ export default function page() {
         )}
       </Dropzone>
 
+      <div className="grid grid-cols-[70px_1fr] items-center gap-2 my-5">
+        <Label htmlFor="key" className="">
+          Name
+        </Label>
+        <Input
+          id="key"
+          defaultValue={name}
+          onChange={(e) => setName(e.target.value)}
+          className="max-w-[400px] w-11/12"
+        />
+      </div>
+
       {images.length > 0 && (
         <div className="my-10">
           <p>Selected Images:</p>
@@ -78,7 +93,9 @@ export default function page() {
         </div>
       )}
 
-      <Button onClick={handleUpload}>Upload</Button>
+      <Button onClick={handleUpload} disabled={name === ""}>
+        Upload
+      </Button>
 
       <Dialog>
         <DialogTrigger id="key-dialog"></DialogTrigger>
@@ -91,7 +108,7 @@ export default function page() {
           </DialogHeader>
           <div className="flex items-center space-x-2">
             <div className="grid flex-1 gap-2">
-              <Label htmlFor="link" className="sr-only">
+              <Label htmlFor="key" className="sr-only">
                 Key
               </Label>
               <Input id="key" defaultValue={key} readOnly />
