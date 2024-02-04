@@ -1,10 +1,12 @@
 from fastapi import FastAPI, Depends
 import uvicorn
-from dotenv import load_dotenv, find_dotenv
-from app.routes import route
+from dotenv import load_dotenv
+from app.routes import route, auth_route
 from app.config import database
+from app.utils import auth
 from fastapi.middleware.cors import CORSMiddleware
 import os
+
 
 if load_dotenv(os.path.join(os.path.dirname(__file__), ".env")):
     print("Environment variables loaded successfully.✅")
@@ -14,6 +16,7 @@ else:
 app = FastAPI(root_path="/api/v1")
 origins = ["*"]
 
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
@@ -22,12 +25,17 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.include_router(route.router, dependencies=[Depends(database.get_database)])
+app.include_router(
+    route.router,
+    dependencies=[Depends(database.get_database)],
+)
+app.include_router(auth_route.router, dependencies=[Depends(database.get_database)])
 
 app.add_event_handler("startup", database.connect_to_database)
 app.add_event_handler("shutdown", database.close_connection)
 
-
 if __name__ == "__main__":
     print("Starting server.....")
-    uvicorn.run("main:app", port=5500, reload=True)
+    uvicorn.run(
+        app="main:app", port=5500, reload=True, reload_includes=["**/*.py"], workers=1
+    )
