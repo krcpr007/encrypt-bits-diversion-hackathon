@@ -1,4 +1,4 @@
-# encrypt-bits
+# encrypt-pixels
 
 ## Backend
 
